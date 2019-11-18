@@ -1,0 +1,6 @@
+"origen","destino"
+"origen/folder1/folder1-1/folder1-2/file1-1.txt", "destino/bck"
+"origen/folder1/folder1-1/folder1-3/file1-2.txt", "destino/bck"
+"origen/folder1/folder1-1/file1-4.txt", "destino/bck"
+"origen/folder2/folder2-1/file2.txt", "destino/bck"
+"origen/folder3/file3.txt", "destino/bck"
