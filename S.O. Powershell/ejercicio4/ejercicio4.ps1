@@ -36,23 +36,23 @@
 
 #--------------------------Declaracion de parametros-------------------------
 
-[CmdletBinding(DefaultParameterSetName = 'Informar')]
-Param( 
-    [Parameter(Position = 1, Mandatory = $true)]
-    [System.IO.DirectoryInfo] $PathZip,
-    [Parameter(Position = 3)]
-    [System.IO.DirectoryInfo] $Directorio,
+ [CmdletBinding(DefaultParameterSetName='Informar')]
+ Param( 
+     [Parameter(Position = 1, Mandatory = $true)]
+     [System.IO.DirectoryInfo] $PathZip,
+     [Parameter(Position = 3)]
+     [System.IO.DirectoryInfo] $Directorio,
 
-    [Parameter(ParameterSetName = 'Descomprimir', Mandatory = $True)]
-    [switch]$Descomprimir,
-    #  [Parameter(ParameterSetName='Directorio',Position = 2, Mandatory=$True)]
-    [Parameter(ParameterSetName = 'Comprimir' , Mandatory = $True)]
-    [switch]$Comprimir,
-    #  [Parameter(ParameterSetName='PathZip', Mandatory=$True)]
-    [Parameter(ParameterSetName = 'Informar')]
-    [switch]$Informar
+     [Parameter(ParameterSetName='Descomprimir', Mandatory=$True)]
+     [switch]$Descomprimir,
+   #  [Parameter(ParameterSetName='Directorio',Position = 2, Mandatory=$True)]
+     [Parameter(ParameterSetName='Comprimir' , Mandatory=$True)]
+     [switch]$Comprimir,
+   #  [Parameter(ParameterSetName='PathZip', Mandatory=$True)]
+     [Parameter(ParameterSetName='Informar')]
+     [switch]$Informar
 
-)
+     )
 
 #--------------------------Declaracion Funciones-----------------------------
 
@@ -71,7 +71,6 @@ function informar {
     }
     else {
         #$CrearRuta = Join-Path (pwd) $PathZip
-        #Write-Host "  El archivo [$CrearRuta] existe."
         $CrearRuta = $(Resolve-Path $PathZip)
         #Write-Host "  El archivo [$CrearRuta] existe."
     }
@@ -114,37 +113,37 @@ function informar {
 #--------------------------Funciones comprimir---------
 function comprimir {
     param ( [String] $PathZip, [String] $Directorio )
-    [ System.IO.DirectoryInfo]$_dirOrigen = $PathZip
+     [ System.IO.DirectoryInfo]$_dirOrigen=$PathZip
     
-    $existe = Test-Path $PathZip.ToString().TrimEnd($($_dirOrigen.BaseName))
+  $existe = Test-Path $PathZip.ToString().TrimEnd($($_dirOrigen.BaseName))
    
-    if (-Not  $($null -eq $($_dirOrigen.Extension)) ) {
-        if (-Not $($($_dirOrigen.Extension) -eq ".zip")) {
-            Write-Warning "Error de extencion de archivo[$PathZip] "
-            exit 1
-        }
+    if (-Not  $($null -eq $($_dirOrigen.Extension)) )
+    {
+        if (-Not $($($_dirOrigen.Extension) -eq ".zip"))
+            {
+                 Write-Host "Error de extencion de archivo[$PathZip] "
+                 exit 1
+            }
         elseif ( -Not $existe) {
-            Write-Warning "Error de directorio [ $PathZip ] No existe "
+            Write-Host "Error de directorio [ $PathZip ] No existe "
             exit 1
-        }
-        
+       }
     }
     
     $existe = Test-Path $Directorio
     if ($existe -eq $false) {
-        Write-Warning "El Directorio [$Directorio] no existe"
-        Write-Host ""
-        exit 1
+    Write-Host "El Directorio [$Directorio] no existe"
+    Write-Host ""
+    exit 1
     }
 
-    $compress = @{
-        LiteralPath      = $Directorio
-        CompressionLevel = "Optimal"
-        # DestinationPath = $($PathZip+"\"+$_dirOrigen.BaseName+".zip")
-        DestinationPath  = $PathZip
-    }
-
-    Compress-Archive @compress
+        $compress = @{
+            LiteralPath= $Directorio
+            CompressionLevel = "Optimal"
+           # DestinationPath = $($PathZip+"\"+$_dirOrigen.BaseName+".zip")
+            DestinationPath = $PathZip
+            }
+        Compress-Archive @compress
 
 }#Fin comprimir
 
@@ -163,8 +162,7 @@ function descomprimir {
         Write-Host "El Directorio [$Directorio] no existe, Creando Directorio"
         New-Item $Directorio -Type Directory
     }
-    #[System.IO.DirectoryInfo]$_dirOrigen=$PathZip
-    #Expand-Archive -LiteralPath $PathZip -DestinationPath $Directorio"\"$($_dirOrigen.Name)
+  
     Expand-Archive -LiteralPath $PathZip -DestinationPath $Directorio"\"$($PathZip.Name)
 
 }#Fin descomprimir
@@ -173,18 +171,22 @@ function descomprimir {
 
 
 #if ( $PSCmdlet.ParameterSetName.CompareTo("-Informar"))
-if ( $Informar.IsPresent) {
+if ( $Informar.IsPresent)
+{
     Write-Host ("Realizando informe Sobre [$PathZip]") 
     informar $PathZip
+    exit 1
 }
 
-if ( $Comprimir.IsPresent) {
+if ( $Comprimir.IsPresent)
+{
     Write-Host ("Realizando compresion Sobre [$Directorio] ") 
     comprimir $PathZip $Directorio
     Write-Host ("Compresion finalizada") 
 }
 
-if ( $Descomprimir.IsPresent) {
+if ( $Descomprimir.IsPresent)
+{
     Write-Host ("Realizando descompresion Sobre [$PathZip]") 
     descomprimir $PathZip $Directorio
     Write-Host ("Descompresion Realizada") 

@@ -29,6 +29,7 @@
 	
 #>
 
+
 [CmdLetBinding()]
 Param (
     [Parameter(ParameterSetName="set1",Position=0)]
@@ -47,14 +48,37 @@ Param (
         })]
     [System.IO.DirectoryInfo]$Directorio
 )
+$timer = New-Object  -type System.Timers.Timer
+$timer.Interval = 10000
+$timer.AutoReset = $true
 
 if($Procesos -And !$Peso -And !$Directorio)  {
-    $m = Get-Process | measure
-    $m.Count    
+
+    $msj=(Get-Process).count
+    Write-Host $msj
+
+    Register-ObjectEvent -InputObject $timer -EventName Elapsed -SourceIdentifier eventoProceso -Action {
+
+        $msj=(Get-Process).count
+        Write-Host $msj
+    }   
+
 }elseif(!$Procesos -And $Peso -And $Directorio){
-    $dir = Get-ChildItem -Path $Directorio -File -Recurse | Measure-Object -Property Length -Sum
-    $dir.sum
-}
-else {
+
+    $msj=(Get-ChildItem -path "$Directorio" -File -recurse | Measure-Object -Property Length -sum).Sum
+    Write-Host $msj
+
+    Register-ObjectEvent -InputObject $timer -MessageData $Directorio -EventName Elapsed -SourceIdentifier eventoDirectorio -Action {
+
+        $Directorio = $event.MessageData
+        $msj=(Get-ChildItem -path "$Directorio" -File -recurse | Measure-Object -Property Length -sum).Sum
+        Write-Host $msj
+    
+    }
+
+}else {
     Write-Output "No se validaron los parametros."
+    return;
 }
+
+$timer.Enabled = $True
