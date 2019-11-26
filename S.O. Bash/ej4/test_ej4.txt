@@ -1,0 +1,12 @@
+//linea 1
+linea // 2
+/* linea 3
+linea 4
+linea 5 */
+lin /*nea 6*/
+line /*a 7 */
+line /*a  */ aa
+linea 9
+/* ejercicio 4
+linea de codigo1
+linea de codigo2
